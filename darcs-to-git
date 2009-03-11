@@ -434,7 +434,7 @@ while (gotone = pull_patch_interactive(SRCREPO))
       (r/secs_day).truncate, (r.modulo(secs_day)/secs_hour).truncate,
       (r.modulo(secs_hour)/60).truncate ]
   if i.modulo(50) == 0 then
-    run("git-gc")
+    run("git-gc --auto")
   end
 end
 
@@ -464,7 +464,7 @@ puts "\nPulled #{i} patch#{i == 1 ? "" : "es"}" if i > 0
 
 # Only do this on Sundays -- Yep, completely random choice.
 if Time.now.wday == 0 then
-  run( "git-gc" )
+  run( "git-gc --auto" )
   run( "darcs", "optimize" )
 end
 
