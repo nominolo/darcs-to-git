@@ -144,7 +144,7 @@ class DarcsPatch
     self.inverted = (patch_xml.attribute('inverted').to_s == 'True')
     self.identifier = patch_xml.attribute('hash').to_s
     self.name = decode_darcs_escapes(patch_xml.get_elements('name').first.get_text.value) rescue 'Unnamed patch'
-    self.comment = decode_darcs_escapes(patch_xml.get_elements('comment').first.get_text.value) rescue nil
+    self.comment = remove_ignore_this(decode_darcs_escapes(patch_xml.get_elements('comment').first.get_text.value)) rescue nil
     if (self.is_tag = (self.name =~ /^TAG (.*)/))
       self.git_tag_name = $1.gsub(/[\s:]+/, '_')
     end
@@ -232,6 +232,10 @@ class DarcsPatch
     # a hexadecimal.  We translate this to '=hh' and use ruby's unpack
     # to do replace this with the proper byte.
     str.gsub(/\[\_\\(..)\_\]/) { |x| "=#{$1}".unpack("M*")[0] }
+  end
+
+  def remove_ignore_this(str)
+    str.split("\n").delete_if{|c| c =~ /Ignore\-this\: .*/}.join("\n")
   end
 
   def pull
